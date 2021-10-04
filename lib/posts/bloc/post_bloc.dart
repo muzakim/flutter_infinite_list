@@ -9,6 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:stream_transform/stream_transform.dart';
 
 part 'post_event.dart';
+
 part 'post_state.dart';
 
 const _postLimit = 20;
@@ -26,9 +27,28 @@ class PostBloc extends Bloc<PostEvent, PostState> {
       _onPostFetched,
       transformer: throttleDroppable(throttleDuration),
     );
+
+    on<PostAdded>(
+      _onPostAdded,
+      transformer: throttleDroppable(throttleDuration),
+    );
   }
 
   final http.Client httpClient;
+
+  void _onPostAdded(
+    PostAdded event,
+    Emitter<PostState> emit,
+  ) {
+    final newPost =
+        const Post(id: 111, title: 'new item', body: 'new item body');
+
+    emit(state.copyWith(
+      status: PostStatus.success,
+      posts: state.posts..add(newPost),
+      hasReachedMax: false,
+    ));
+  }
 
   Future<void> _onPostFetched(
     PostFetched event,

@@ -6,3 +6,5 @@ abstract class PostEvent extends Equatable {
 }
 
 class PostFetched extends PostEvent {}
+
+class PostAdded extends PostEvent {}
